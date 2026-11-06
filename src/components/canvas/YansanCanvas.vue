@@ -745,8 +745,8 @@ const isQiangGongActive = ref(false);
 const qiangGongSeat = ref<number | null>(null);
 const danmakuText = ref('');
 let danmakuTimer: any = null;
-const spade3Seat = ref(0);
-const spadeASeat = ref(0);
+const spade3Seat = ref<number | null>(null);
+const spadeASeat = ref<number | null>(null);
 const animTime = ref(0);
 let animFrameId: number | null = null;
 let botTimer: any = null;
@@ -1342,8 +1342,8 @@ function applyDeal(deal: any, forceReApply = false) {
     hands[i] = [...initialHands[i]];
   }
 
-  spade3Seat.value = deal.spade3Seat !== undefined ? deal.spade3Seat : 0;
-  spadeASeat.value = deal.spadeASeat !== undefined ? deal.spadeASeat : 0;
+  spade3Seat.value = null;
+  spadeASeat.value = null;
   const starter = deal.starterSeat !== undefined ? deal.starterSeat : 0;
   turnSeat.value = starter;
   isFirstTurn.value = true;
@@ -1418,10 +1418,8 @@ function dealNewMatch() {
   hands[2] = [...initialHands[2]];
   hands[3] = [...initialHands[3]];
 
-  // 检测黑桃3与黑桃A持有人，动态确立同盟（同盟不固定位置）
-  const holders = detectYansanSpecialHolders(hands);
-  spade3Seat.value = holders.spade3Seat;
-  spadeASeat.value = holders.spadeASeat;
+  spade3Seat.value = null;
+  spadeASeat.value = null;
 
   let starter = 0;
   for (let i = 0; i < 4; i++) {
@@ -2301,6 +2299,14 @@ function executeBaoDanPlay(seat: number) {
 function afterComboPlayed(seat: number, combo: Combo, isRemote: boolean = false) {
   const previousCombo = lastCombo.value && lastCombo.value.seat !== seat ? lastCombo.value : null;
 
+  // 当打出黑桃3或黑桃A时，在桌面上公开揭晓对应的持有人
+  if (combo.cards.some((c) => c.rank === 3 && c.suit === '♠')) {
+    spade3Seat.value = seat;
+  }
+  if (combo.cards.some((c) => c.rank === 14 && c.suit === '♠')) {
+    spadeASeat.value = seat;
+  }
+
   // 严格按卡牌 ID 去重追加，彻底杜绝头像框与历史记录牌面重复叠加堆积
   const existingPlayedIds = new Set(seatPlayedCards[seat].map((c) => c.id));
   const newCards = combo.cards.filter((c) => !existingPlayedIds.has(c.id));
@@ -2899,8 +2905,11 @@ function isTeamMate(s1: number, s2: number): boolean {
     if (s1 === qiangGongSeat.value || s2 === qiangGongSeat.value) return false;
     return true;
   }
-  const s3 = spade3Seat.value !== null ? spade3Seat.value : detectYansanSpecialHolders(hands, seatPlayedCards).spade3Seat;
-  const sA = spadeASeat.value !== null ? spadeASeat.value : detectYansanSpecialHolders(hands, seatPlayedCards).spadeASeat;
+  const s3 = spade3Seat.value;
+  const sA = spadeASeat.value;
+  if (s3 === null || sA === null) {
+    return false;
+  }
   if (s3 === sA) {
     if (s1 === s3 || s2 === s3) return false;
     return true;

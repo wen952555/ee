@@ -23,8 +23,8 @@ export interface YansanRoomDeal {
   deck: YansanServerCard[];
   seatCards: Record<number, YansanServerCard[]>;
   starterSeat: number; // 持有方块4首出的席位 (0..3)
-  spade3Seat: number;  // 持有黑桃3的席位 (0..3)
-  spadeASeat: number;  // 持有黑桃A的席位 (0..3)
+  spade3Seat?: number;  // 持有黑桃3的席位 (0..3)
+  spadeASeat?: number;  // 持有黑桃A的席位 (0..3)
   createdAt: number;
 }
 
@@ -145,19 +145,11 @@ export function createYansanDeal(): YansanRoomDeal {
   };
 
   let starterSeat = 0;
-  let spade3Seat = 0;
-  let spadeASeat = 0;
 
   for (let s = 0; s < 4; s++) {
     const h = seatCards[s];
     if (h.some((c) => c.rank === 4 && c.suit === '♦')) {
       starterSeat = s;
-    }
-    if (h.some((c) => c.rank === 3 && c.suit === '♠')) {
-      spade3Seat = s;
-    }
-    if (h.some((c) => c.rank === 14 && c.suit === '♠')) {
-      spadeASeat = s;
     }
   }
 
@@ -167,8 +159,6 @@ export function createYansanDeal(): YansanRoomDeal {
     deck: pool,
     seatCards,
     starterSeat,
-    spade3Seat,
-    spadeASeat,
     createdAt: Date.now(),
   };
 }
