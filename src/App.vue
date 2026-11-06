@@ -45,40 +45,40 @@
       v-if="currentView === 'lobby'"
       class="w-full px-4 sm:px-6 safe-area-x py-3 sm:py-3.5 bg-[#FAF4E8] border-b border-[#D8C7B0] shadow-xs shrink-0"
     >
-      <div class="max-w-[1360px] mx-auto flex items-center justify-between gap-3">
+      <div class="max-w-[1360px] mx-auto flex items-center justify-between gap-2">
         <!-- 左侧功能组：账号 & 单机试玩 & 安卓APK -->
-        <div class="flex items-center gap-2 sm:gap-2.5">
+        <div class="flex items-center gap-1.5 sm:gap-2">
           <!-- 1. 账号/登录按钮 -->
           <button
             type="button"
             @click="showAuthModal = true"
-            class="h-9.5 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 border border-amber-400/50 cursor-pointer whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-serif font-bold text-xs flex items-center gap-1 shadow-sm transition-all active:scale-95 border border-amber-400/50 cursor-pointer whitespace-nowrap"
             title="账号中心与登录切换"
           >
-            <span class="text-xs sm:text-sm">👤</span>
-            <span>{{ userProfile.isLoggedIn ? userProfile.name : '注册 / 登录' }}</span>
+            <span class="text-xs">👤</span>
+            <span>{{ userProfile.isLoggedIn ? userProfile.name : '登录' }}</span>
           </button>
 
           <!-- 2. 💬 牌友聊天室按钮 -->
           <button
             type="button"
             @click="enterTeahouseChatroom"
-            class="h-9.5 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-[#241B14] via-[#2F2218] to-[#201711] hover:from-[#32251B] hover:to-[#2B1F17] text-amber-300 font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 border border-amber-500/60 hover:border-amber-400 cursor-pointer whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-[#241B14] via-[#2F2218] to-[#201711] hover:from-[#32251B] hover:to-[#2B1F17] text-amber-300 font-serif font-bold text-xs flex items-center gap-1 shadow-sm transition-all active:scale-95 border border-amber-500/60 hover:border-amber-400 cursor-pointer whitespace-nowrap"
             title="进入牌友聊天室，语音交流与牌友组局"
           >
-            <span class="text-xs sm:text-sm">💬</span>
-            <span>牌友聊天室</span>
+            <span class="text-xs">💬</span>
+            <span>聊天室</span>
           </button>
 
           <!-- 3. 单机试玩按钮 -->
           <button
             type="button"
             @click="showOfflineSoloModal = true"
-            class="h-9.5 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-[#5C4533] to-[#433022] hover:from-[#4E3929] hover:to-[#38271A] text-[#FAF4E8] font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 border border-[#7D6049] cursor-pointer whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-[#5C4533] to-[#433022] hover:from-[#4E3929] hover:to-[#38271A] text-[#FAF4E8] font-serif font-bold text-xs flex items-center gap-1 shadow-sm transition-all active:scale-95 border border-[#7D6049] cursor-pointer whitespace-nowrap"
             title="无需联网，随时体验本地人机对弈"
           >
-            <span class="text-xs sm:text-sm">🎮</span>
-            <span>单机试玩</span>
+            <span class="text-xs">🎮</span>
+            <span>试玩</span>
           </button>
 
           <!-- 4. 安卓APK下载按钮 -->
@@ -86,40 +86,62 @@
             :href="directApkDownloadUrl"
             download="chess-game-release.apk"
             @click="handleDirectDownloadApk($event)"
-            class="h-9.5 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 hover:from-emerald-700 hover:to-emerald-600 text-white font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 border border-emerald-500/50 cursor-pointer text-decoration-none select-none whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 hover:from-emerald-700 hover:to-emerald-600 text-white font-serif font-bold text-xs flex items-center gap-1 shadow-sm transition-all active:scale-95 border border-emerald-500/50 cursor-pointer text-decoration-none select-none whitespace-nowrap"
             :class="{ 'opacity-80 pointer-events-none': isDownloadingApk }"
             title="点击直接下载最新 Android APK 安装包"
           >
-            <span class="text-xs sm:text-sm">{{ isDownloadingApk ? '⏳' : '📲' }}</span>
-            <span>{{ isDownloadingApk ? downloadProgressText : '安卓APK' }}</span>
+            <span class="text-xs">{{ isDownloadingApk ? '⏳' : '📲' }}</span>
+            <span>{{ isDownloadingApk ? downloadProgressText : 'APK' }}</span>
           </a>
         </div>
 
-        <!-- 中间：游戏规则按钮 -->
-        <div class="flex items-center justify-center">
+        <!-- 中间：游戏规则按钮 与 实时网络网速状态图标 -->
+        <div class="flex items-center justify-center gap-1.5">
           <!-- 4. 游戏规则按钮 -->
           <button
             type="button"
             @click="showGameRulesModal = true"
-            class="h-9.5 sm:h-10 px-4 sm:px-4.5 rounded-xl bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-500 text-amber-100 font-serif font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm border border-amber-400/50 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-500 text-amber-100 font-serif font-bold text-xs flex items-center gap-1 shadow-sm border border-amber-400/50 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
             title="查看玩法规则与计分细则"
           >
-            <span class="text-xs sm:text-sm">📜</span>
-            <span>游戏规则</span>
+            <span class="text-xs">📜</span>
+            <span>规则</span>
+          </button>
+
+          <!-- 4b. 实时网络网速状态图标 -->
+          <button
+            type="button"
+            @click="showServerConfigModal = true"
+            class="h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-xl border text-xs font-mono font-bold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+            :class="networkStatusColorClass"
+            :title="`网络状态：${networkStatusText} (${wsRtt}ms) · 点击管理服务器节点与网络配置`"
+          >
+            <span class="relative flex h-2 w-2 items-center justify-center shrink-0">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                :class="networkDotBgClass"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-2 w-2"
+                :class="networkDotBgClass"
+              ></span>
+            </span>
+            <span class="text-xs">📶</span>
+            <span>{{ networkStatusLabel }}</span>
           </button>
         </div>
 
         <!-- 右侧：积分管理钱庄按钮 -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5">
           <!-- 5. 积分管理按钮 -->
           <button
             type="button"
             @click="openPointsModal"
-            class="h-9.5 sm:h-10 px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-[#241B14] via-[#2F2218] to-[#201711] hover:from-[#32251B] hover:to-[#2B1F17] text-amber-300 font-serif font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 border border-amber-500/50 hover:border-amber-400 cursor-pointer whitespace-nowrap"
+            class="h-9 sm:h-9.5 px-3 sm:px-3.5 rounded-xl bg-gradient-to-r from-[#241B14] via-[#2F2218] to-[#201711] hover:from-[#32251B] hover:to-[#2B1F17] text-amber-300 font-serif font-bold text-xs flex items-center gap-1 shadow-sm transition-all active:scale-95 border border-amber-500/50 hover:border-amber-400 cursor-pointer whitespace-nowrap"
             title="钱庄账户与积分管理"
           >
-            <span class="text-xs sm:text-sm text-amber-400">🪙</span>
-            <span>钱庄账户 ({{ userProfile.coins.toLocaleString() }}分)</span>
+            <span class="text-xs text-amber-400">🪙</span>
+            <span>钱庄 ({{ userProfile.coins.toLocaleString() }}分)</span>
           </button>
         </div>
       </div>
@@ -1276,24 +1298,6 @@
       @close="showVictoryPosterModal = false"
     />
 
-    <!-- 移动端/锁屏唤醒平滑恢复网络浮动标识 (Smooth Reconnection Indicator) -->
-    <transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 -translate-y-4 scale-95"
-      enter-to-class="opacity-100 translate-y-0 scale-100"
-      leave-active-class="transition duration-300 ease-in"
-      leave-from-class="opacity-100 translate-y-0 scale-100"
-      leave-to-class="opacity-0 -translate-y-4 scale-95"
-    >
-      <div
-        v-if="showSmoothReconnectBadge"
-        class="fixed top-3 left-1/2 transform -translate-x-1/2 z-[110] px-4 py-2 rounded-2xl bg-[#1C1612]/95 border-2 border-emerald-500/80 shadow-[0_0_30px_rgba(16,185,129,0.45)] backdrop-blur-md text-emerald-300 text-xs sm:text-sm font-bold flex items-center gap-2.5 select-none pointer-events-none"
-      >
-        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-        <span class="font-serif-title tracking-wide text-white">牌桌网络已平滑恢复 · 席位与实时对局状态完全同步</span>
-      </div>
-    </transition>
-
   </div>
 </template>
 
@@ -2087,6 +2091,32 @@ const httpConnected = ref(true);
 const wsRtt = ref(15);
 const packetLogs = reactive<{ id: string; dir: 'IN' | 'OUT'; summary: string; ts: string }[]>([]);
 
+const networkStatusLabel = computed(() => {
+  if (!wsConnected.value) return '断线';
+  return `${wsRtt.value}ms`;
+});
+
+const networkStatusText = computed(() => {
+  if (!wsConnected.value) return '未连接服务器';
+  if (wsRtt.value < 80) return '极速流畅';
+  if (wsRtt.value < 180) return '连接良好';
+  return '延迟偏高';
+});
+
+const networkStatusColorClass = computed(() => {
+  if (!wsConnected.value) return 'text-rose-300 border-rose-500/60 bg-rose-950/40 hover:bg-rose-900/60';
+  if (wsRtt.value < 80) return 'text-emerald-300 border-emerald-500/50 bg-emerald-950/40 hover:bg-emerald-900/60';
+  if (wsRtt.value < 180) return 'text-amber-300 border-amber-500/50 bg-amber-950/40 hover:bg-amber-900/60';
+  return 'text-orange-300 border-orange-500/60 bg-orange-950/40 hover:bg-orange-900/60';
+});
+
+const networkDotBgClass = computed(() => {
+  if (!wsConnected.value) return 'bg-rose-500';
+  if (wsRtt.value < 80) return 'bg-emerald-400';
+  if (wsRtt.value < 180) return 'bg-amber-400';
+  return 'bg-orange-500';
+});
+
 const showOfflineSoloModal = ref(false);
 const reconnectCountdown = ref(5);
 let reconnectInterval: any = null;
@@ -2704,8 +2734,6 @@ function connectWs() {
     }
     reconnectCountdown.value = 5;
     if (wasDisconnected) {
-      triggerSpeechBubble('🟢 网络已重新连接，牌桌状态已同步');
-      triggerSmoothReconnectBadge();
       soundFX.playClink?.();
     }
     addPacketLog('OUT', 'WS_HANDSHAKE_INIT');
@@ -2789,8 +2817,6 @@ function connectWs() {
           if (currentView.value !== 'arena') {
             currentView.value = 'arena';
           }
-          triggerSpeechBubble('🟢 牌桌网络已重连，对局锁定状态已平滑恢复！');
-          triggerSmoothReconnectBadge();
           soundFX.playClink?.();
         } else {
           clearActiveGameLock();
