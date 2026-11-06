@@ -840,10 +840,25 @@ function playVoiceBroadcast(audioUrl: string, sender: string, duration = 2) {
 function handleWsMessage(event: MessageEvent) {
   try {
     const msg = JSON.parse(event.data);
-    if (msg.type === 'scene_room_update') {
+    if (msg.type === 'scene_join_ack') {
+      if (msg.gameType === props.gameType && msg.sceneMode === props.sceneMode) {
+        if (msg.roomId) currentRoomId.value = msg.roomId;
+        if (msg.deal) currentRoomDeal.value = msg.deal;
+        if (Array.isArray(msg.players)) {
+          currentPlayers.value = msg.players;
+          if (currentPlayers.value.length >= props.maxPlayers && !isStarting.value) {
+            launchGameNow();
+          }
+        }
+      }
+    } else if (msg.type === 'scene_room_update') {
       if (msg.gameType === props.gameType && msg.sceneMode === props.sceneMode) {
         const isMeInRoom = (msg.roomId && currentRoomId.value && msg.roomId === currentRoomId.value) ||
-          (Array.isArray(msg.players) && msg.players.some((p: any) => (props.currentUser?.id && p.id === props.currentUser.id) || (props.currentUser?.name && p.name === props.currentUser.name)));
+          (Array.isArray(msg.players) && msg.players.some((p: any) =>
+            (props.currentUser?.id && p.id === props.currentUser.id) ||
+            (props.currentUser?.name && p.name === props.currentUser.name) ||
+            (p.originalId && p.originalId === props.currentUser?.id)
+          ));
         if (!isMeInRoom && msg.players && msg.players.length > 0) return;
 
         if (msg.roomId) {
@@ -862,7 +877,11 @@ function handleWsMessage(event: MessageEvent) {
     } else if (msg.type === 'scene_room_full' || msg.type === 'scene_room_started' || msg.type === 'game_deal') {
       if (msg.gameType === props.gameType && msg.sceneMode === props.sceneMode) {
         const isMeInRoom = (msg.roomId && currentRoomId.value && msg.roomId === currentRoomId.value) ||
-          (Array.isArray(msg.players) && msg.players.some((p: any) => (props.currentUser?.id && p.id === props.currentUser.id) || (props.currentUser?.name && p.name === props.currentUser.name)));
+          (Array.isArray(msg.players) && msg.players.some((p: any) =>
+            (props.currentUser?.id && p.id === props.currentUser.id) ||
+            (props.currentUser?.name && p.name === props.currentUser.name) ||
+            (p.originalId && p.originalId === props.currentUser?.id)
+          ));
         if (!isMeInRoom && msg.players && msg.players.length > 0) return;
 
         if (msg.roomId) {

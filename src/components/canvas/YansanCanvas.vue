@@ -1134,7 +1134,7 @@ function getInitialRoom(): string | null {
 const selectedRoom = ref<string | null>(getInitialRoom());
 
 watch(() => props.sceneMode, (newVal) => {
-  if (newVal && !selectedRoom.value) {
+  if (newVal) {
     if (newVal.includes('10-20')) selectedRoom.value = '10-20';
     else if (newVal.includes('20-40')) selectedRoom.value = '20-40';
     else selectedRoom.value = '5-10';
@@ -3689,7 +3689,7 @@ function onWsMessage(ev: MessageEvent) {
       lastProcessedMoveCount = -1;
       lastProcessedMoveKey = '';
       if (msg.deal) applyDeal(msg.deal, true);
-    } else if (msg.type === 'scene_room_full' || msg.type === 'scene_room_started') {
+    } else if (msg.type === 'scene_join_ack' || msg.type === 'scene_room_full' || msg.type === 'scene_room_started') {
       lastProcessedMoveCount = -1;
       lastProcessedMoveKey = '';
       if (msg.deal) {

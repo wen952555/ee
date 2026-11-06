@@ -640,6 +640,29 @@ function chessWebSocketPlugin(): Plugin {
               return;
             }
 
+            if (msg.type === 'scene_player_ready') {
+              const targetRoomId = msg.roomId || (ws as any).sceneRoomId;
+              const pId = msg.playerId || (ws as any).scenePlayerId;
+              if (targetRoomId && sceneWaitingRooms.has(targetRoomId)) {
+                const room = sceneWaitingRooms.get(targetRoomId);
+                const pl = room.players.find((p: any) => (p.id && pId && p.id === pId) || p.socketId === (ws as any).socketId);
+                if (pl) {
+                  pl.isReady = Boolean(msg.isReady ?? true);
+                }
+                broadcast({
+                  type: 'scene_room_update',
+                  roomId: room.id,
+                  gameType: room.gameType,
+                  sceneMode: room.sceneMode,
+                  players: room.players,
+                  maxPlayers: room.maxPlayers,
+                  status: room.status,
+                });
+                startRoomGameIfFull(room);
+              }
+              return;
+            }
+
             if (msg.type === 'scene_start_game') {
               const roomId = msg.roomId;
               if (roomId && sceneWaitingRooms.has(roomId)) {
@@ -797,8 +820,10 @@ function chessWebSocketPlugin(): Plugin {
               };
 
               // Enforce unique player ID if default/generic
+              const rawId = p.id;
               if (!p.id || p.id === 'P-me' || p.id === 'P-123') {
                 p.id = `P-usr-${(ws as any).socketId || Date.now()}`;
+                p.originalId = rawId || 'P-me';
               }
 
               // Enforce 100 points minimum admission for all games
@@ -861,6 +886,21 @@ function chessWebSocketPlugin(): Plugin {
 
               (ws as any).sceneRoomId = room.id;
               (ws as any).scenePlayerId = p.id;
+
+              // 立即向刚入座的客户端发送 scene_join_ack 确认消息，确保其 activeRoomId 与 currentRoomId 瞬间对齐
+              try {
+                ws.send(JSON.stringify({
+                  type: 'scene_join_ack',
+                  roomId: room.id,
+                  gameType: room.gameType,
+                  sceneMode: room.sceneMode,
+                  player: p,
+                  players: room.players,
+                  maxPlayers: room.maxPlayers,
+                  status: room.status,
+                  deal: room.deal,
+                }));
+              } catch {}
 
               if (!startRoomGameIfFull(room)) {
                 room.status = 'waiting';

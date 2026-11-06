@@ -2826,10 +2826,20 @@ function connectWs() {
             }
           }
         }
+      } else if (msg.type === 'scene_join_ack') {
+        if (msg.roomId) activeRoomId.value = msg.roomId;
+        if (msg.gameType) activeGameType.value = msg.gameType;
+        if (msg.sceneMode) activeSceneMode.value = msg.sceneMode;
+        if (Array.isArray(msg.players)) currentWaitingRoomPlayers.value = msg.players;
+        if (msg.deal) currentRoomDeal.value = msg.deal;
       } else if (msg.type === 'scene_room_full' || msg.type === 'scene_room_started') {
         const playersArr = msg.players || [];
         const isMeInRoom = (msg.roomId && activeRoomId.value && msg.roomId === activeRoomId.value) ||
-          (Array.isArray(playersArr) && playersArr.some((p: any) => (userProfile.id && p.id === userProfile.id) || (userProfile.name && p.name === userProfile.name)));
+          (Array.isArray(playersArr) && playersArr.some((p: any) =>
+            (userProfile.id && p.id === userProfile.id) ||
+            (userProfile.name && p.name === userProfile.name) ||
+            (p.originalId && p.originalId === userProfile.id)
+          ));
 
         if (isMeInRoom) {
           if (msg.roomId) activeRoomId.value = msg.roomId;

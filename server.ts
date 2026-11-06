@@ -685,8 +685,10 @@ wss.on('connection', (ws) => {
         };
 
         // Enforce unique player ID if default/generic
+        const rawId = p.id;
         if (!p.id || p.id === 'P-me' || p.id === 'P-123') {
           p.id = `P-usr-${(ws as any).socketId || Date.now()}`;
+          (p as any).originalId = rawId || 'P-me';
         }
 
         // Enforce 100 points minimum admission for all games
@@ -786,6 +788,21 @@ wss.on('connection', (ws) => {
           playerName: p.name,
           sceneMode: sMode,
         });
+
+        // 立即向刚入座的客户端发送 scene_join_ack 确认消息，确保其 activeRoomId 与 currentRoomId 瞬间对齐
+        try {
+          ws.send(JSON.stringify({
+            type: 'scene_join_ack',
+            roomId: room.id,
+            gameType: room.gameType,
+            sceneMode: room.sceneMode,
+            player: p,
+            players: room.players,
+            maxPlayers: room.maxPlayers,
+            status: room.status,
+            deal: (room as any).deal,
+          }));
+        } catch {}
 
         broadcast({
           type: 'presence_counts',
