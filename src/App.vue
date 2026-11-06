@@ -45,9 +45,9 @@
       v-if="currentView === 'lobby'"
       class="w-full px-4 sm:px-6 safe-area-x py-3 sm:py-3.5 bg-[#FAF4E8] border-b border-[#D8C7B0] shadow-xs shrink-0"
     >
-      <div class="max-w-[1360px] mx-auto flex items-center justify-between gap-2">
-        <!-- 左侧功能组：账号 & 单机试玩 & 安卓APK -->
-        <div class="flex items-center gap-1.5 sm:gap-2">
+      <div class="max-w-[1360px] mx-auto flex items-center justify-between gap-1.5 sm:gap-2">
+        <!-- 全部功能按钮组 (统一均等间隔 gap-1.5) -->
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           <!-- 1. 账号/登录按钮 -->
           <button
             type="button"
@@ -93,11 +93,8 @@
             <span class="text-xs">{{ isDownloadingApk ? '⏳' : '📲' }}</span>
             <span>{{ isDownloadingApk ? downloadProgressText : 'APK' }}</span>
           </a>
-        </div>
 
-        <!-- 中间：游戏规则按钮 与 实时网络网速状态图标 -->
-        <div class="flex items-center justify-center gap-1.5">
-          <!-- 4. 游戏规则按钮 -->
+          <!-- 5. 游戏规则按钮 -->
           <button
             type="button"
             @click="showGameRulesModal = true"
@@ -108,7 +105,7 @@
             <span>规则</span>
           </button>
 
-          <!-- 4b. 实时网络网速状态图标 -->
+          <!-- 6. 实时网络网速状态图标 -->
           <button
             type="button"
             @click="showServerConfigModal = true"
@@ -131,9 +128,8 @@
           </button>
         </div>
 
-        <!-- 右侧：积分管理钱庄按钮 -->
-        <div class="flex items-center gap-1.5">
-          <!-- 5. 积分管理按钮 -->
+        <!-- 右侧：积分管理钱庄按钮 (保持固定在最右侧) -->
+        <div class="flex items-center shrink-0 pl-2">
           <button
             type="button"
             @click="openPointsModal"
