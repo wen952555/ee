@@ -106,12 +106,10 @@
           </button>
 
           <!-- 6. 实时网络网速状态图标 -->
-          <button
-            type="button"
-            @click="showServerConfigModal = true"
-            class="h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-xl border text-xs font-mono font-bold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          <div
+            class="h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-xl border text-xs font-mono font-bold flex items-center gap-1 shadow-sm whitespace-nowrap select-none"
             :class="networkStatusColorClass"
-            :title="`网络状态：${networkStatusText} (${wsRtt}ms) · 点击管理服务器节点与网络配置`"
+            :title="`实时网络状态：${networkStatusText} (${wsRtt}ms)`"
           >
             <span class="relative flex h-2 w-2 items-center justify-center shrink-0">
               <span
@@ -125,7 +123,7 @@
             </span>
             <span class="text-xs">📶</span>
             <span>{{ networkStatusLabel }}</span>
-          </button>
+          </div>
         </div>
 
         <!-- 右侧：积分管理钱庄按钮 (保持固定在最右侧) -->
@@ -2729,9 +2727,6 @@ function connectWs() {
       reconnectInterval = null;
     }
     reconnectCountdown.value = 5;
-    if (wasDisconnected) {
-      soundFX.playClink?.();
-    }
     addPacketLog('OUT', 'WS_HANDSHAKE_INIT');
     sendPing();
     notifyPresence(activeGameType.value || 'lobby', activeSceneMode.value || '');
@@ -2813,7 +2808,6 @@ function connectWs() {
           if (currentView.value !== 'arena') {
             currentView.value = 'arena';
           }
-          soundFX.playClink?.();
         } else {
           clearActiveGameLock();
         }
